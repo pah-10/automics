@@ -68,35 +68,35 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.badge_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.featured_play_list_outlined, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].modelo)
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.phone_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.featured_video_outlined , color: Colors.grey.shade500),
                           Text(listaVeiculo[index].marca),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.alternate_email_outlined, color: Colors.grey.shade500),
+                          Icon(Icons.event_sharp, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].ano),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.place_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.follow_the_signs_outlined, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].km),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.place_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.format_color_fill_outlined, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].cor),
                         ],
                       ),

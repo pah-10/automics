@@ -3,9 +3,17 @@ import 'package:automics/view/inicial.dart';
 import 'package:automics/view/login.dart';
 import 'package:automics/view/bottomenu/menu.dart';
 import 'package:automics/view/sobre.dart';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future <void> main() async {
+  //
+  // INICIALIZAR OS Plugins
+  //
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,

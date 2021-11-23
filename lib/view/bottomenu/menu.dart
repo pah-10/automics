@@ -4,6 +4,7 @@
 
 import 'package:automics/view/bottomenu/cliente.dart';
 import 'package:automics/view/bottomenu/veiculo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Menu extends StatefulWidget {
@@ -64,6 +65,7 @@ class _MenuState extends State<Menu> {
                           child: Text('Sair'),
 
                           onPressed: () {
+                            FirebaseAuth.instance.signOut();
                             Navigator.of(context).pushNamedAndRemoveUntil('inicio', (Route<dynamic> route) => false);
                           },
                         ),

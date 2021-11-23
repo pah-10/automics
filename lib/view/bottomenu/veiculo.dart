@@ -11,8 +11,7 @@ class TelaVeiculo extends StatefulWidget {
   @override
   _TelaVeiculoState createState() => _TelaVeiculoState();
 }
-
-enum OpcoesRadio {carro, moto}  //opções do radio
+  //opções do radio
 
 class _TelaVeiculoState extends State<TelaVeiculo> {
   //lista dinâmica para armazenamento dos carros
@@ -30,10 +29,10 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
 
   @override
   void initState() {
-    listaVeiculo.add(Veiculo('AFL-2223', 'Rebel', 'Honda', '2010', '500', 'Preto'));
-    listaVeiculo.add(Veiculo('FUO-0754', 'Fiat Uno', 'Branco', '2000', '1000', 'Branco'));
-    listaVeiculo.add(Veiculo('LUQ-3165', 'Davidson', 'Honda', '2021', '0', 'Cinza'));
-    listaVeiculo.add(Veiculo('HVB-6010', 'Classe G SUV', 'Mercedes', '2019', '700', 'Musgo'));
+    listaVeiculo.add(Veiculo('AFL-2223', 'Rebel', 'Honda', '2010', '500', 'Preto'/*, OpcoesRadio.moto*/));
+    listaVeiculo.add(Veiculo('FUO-0754', 'Fiat Uno', 'Branco', '2000', '1000', 'Branco'/*, OpcoesRadio.carro*/ ));
+    listaVeiculo.add(Veiculo('LUQ-3165', 'Davidson', 'Honda', '2021', '0', 'Cinza'/*, OpcoesRadio.moto*/));
+    listaVeiculo.add(Veiculo('HVB-6010', 'Classe G SUV', 'Mercedes', '2019', '700', 'Musgo'/*, OpcoesRadio.carro*/));
 
     super.initState();
   }
@@ -68,35 +67,35 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.badge_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.featured_play_list_outlined, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].modelo)
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.phone_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.featured_video_outlined , color: Colors.grey.shade500),
                           Text(listaVeiculo[index].marca),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.alternate_email_outlined, color: Colors.grey.shade500),
+                          Icon(Icons.event_sharp, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].ano),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.place_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.follow_the_signs_outlined, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].km),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.place_outlined,color: Colors.grey.shade500),
+                          Icon(Icons.format_color_fill_outlined, color: Colors.grey.shade500),
                           Text(listaVeiculo[index].cor),
                         ],
                       ),
@@ -229,30 +228,31 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
 
                       Text('Qual o tipo do Veiculo?', style: TextStyle(fontSize: 15,), textAlign: TextAlign.start,),
 
-                      ListTile(
+                      RadioListTile(
                         title: const Text('Carro', style: TextStyle(fontSize: 15,),),
-                        leading: Radio<OpcoesRadio>(
+                        
                           value: OpcoesRadio.carro,
                           groupValue: _character,
                           onChanged: (OpcoesRadio? value) {
                             setState(() {
+
                               _character = value;
                             });
                           },
                         ),
-                      ),
 
-                      ListTile(
+
+                      RadioListTile(
                         title: const Text('Moto', style: TextStyle(fontSize: 15,),),
-                        leading: Radio<OpcoesRadio>(
-                          value: OpcoesRadio.moto,
+                        
+                          value:  OpcoesRadio.moto,
                           groupValue: _character,
                           onChanged: (OpcoesRadio? value) {
                             setState(() {
                               _character = value;
                             });
                           },
-                        ),
+                        
                       ),
                     ],
                   ),
@@ -267,7 +267,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                           () {
                             var msg = '';
                             if (txtPlaca.text.isNotEmpty && txtModelo.text.isNotEmpty && txtMarca.text.isNotEmpty && txtAno.text.isNotEmpty && txtKm.text.isNotEmpty && txtCor.text.isNotEmpty ) {
-                              listaVeiculo.add(Veiculo(txtPlaca.text, txtModelo.text, txtMarca.text, txtAno.text, txtKm.text, txtCor.text),);
+                              listaVeiculo.add(Veiculo(txtPlaca.text, txtModelo.text, txtMarca.text, txtAno.text, txtKm.text, txtCor.text /*, OpcoesRadio.carro*/),);
 
                               txtPlaca.clear();
                               txtModelo.clear();

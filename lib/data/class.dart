@@ -17,6 +17,8 @@ class Cliente {
   Cliente(this.nome, this.cpf, this.dtNascimento, this.telefone, this.email, this.endereco);
 }
 
+enum OpcoesRadio {carro, moto}
+
 class Veiculo {
   final String placa;
   final String modelo;
@@ -24,6 +26,7 @@ class Veiculo {
   final String ano;
   final String km;
   final String cor;
+ // final OpcoesRadio tipo;
 
-  Veiculo(this.placa, this.modelo, this.marca, this.ano, this.km, this.cor);
+  Veiculo(this.placa, this.modelo, this.marca, this.ano, this.km, this.cor/*,this.tipo*/);
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "789762859640",
+    "project_id": "automics-d6c2d",
+    "storage_bucket": "automics-d6c2d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789762859640:android:e87edcec83e547d66f838d",
+        "android_client_info": {
+          "package_name": "com.example.automics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789762859640-aclnbkvdj8kubcmh7eiu7d138poi8fsm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR3d0wsCrVA-JGexY9OAl_AdvhuQtWGKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789762859640-aclnbkvdj8kubcmh7eiu7d138poi8fsm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

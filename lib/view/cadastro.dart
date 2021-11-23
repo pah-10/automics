@@ -3,6 +3,7 @@
 //
 
 import 'package:automics/data/class.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Cadastro extends StatefulWidget {
@@ -14,7 +15,7 @@ class Cadastro extends StatefulWidget {
 
 class _CadastroState extends State<Cadastro> {
   //lista dinâmica para armazenamento dos usuáriosmecanicos
-  var listaMecanico = <Mecanico>[];
+  //var listaMecanico = <Mecanico>[];
 
   //Variaveis de controle do login
   var txtemailCadastro = TextEditingController();
@@ -23,8 +24,8 @@ class _CadastroState extends State<Cadastro> {
 
   @override void initState() {
 
-    listaMecanico.add(Mecanico('paola@capita', '7', 'Paola Capita'));
-    listaMecanico.add(Mecanico('breno@augusto', '123', 'Breno Augusto'));
+    //listaMecanico.add(Mecanico('paola@capita.com', '32035688', 'Paola Capita'));
+    //listaMecanico.add(Mecanico('breno@augusto.com', '1234567', 'Breno Augusto'));
 
     super.initState();
   }
@@ -86,28 +87,22 @@ class _CadastroState extends State<Cadastro> {
                 
                 onPressed: () {
                   setState(() {
-                    var msg = '';
-
                     if (txtNomeCadastro.text.isNotEmpty && txtemailCadastro.text.isNotEmpty && txtSenhaCadastro.text.isNotEmpty) {
-                      listaMecanico.add(Mecanico(txtemailCadastro.text, txtSenhaCadastro.text, txtNomeCadastro.text));
+                      //listaMecanico.add(Mecanico(txtemailCadastro.text, txtSenhaCadastro.text, txtNomeCadastro.text));
 
+                      criarConta(
+                        txtNomeCadastro.text,
+                        txtemailCadastro.text,
+                        txtSenhaCadastro.text,
+                      );
+                      
                       txtNomeCadastro.clear();
                       txtemailCadastro.clear();
                       txtSenhaCadastro.clear();
-
-                      msg = 'Cadastro de usuário concluido!';
-
-                      Navigator.pushNamed(context, 'login');
+ 
                     } else {
-                      msg = 'Erro: Preencha todos os campos!';
+                      exibirMensagem('ERRO: Preencha todos os campos!');
                     }
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                      content: Text(msg),
-                      duration: Duration(seconds: 2),
-                      ),
-                    );
                   },);
                 },
               ),
@@ -117,6 +112,37 @@ class _CadastroState extends State<Cadastro> {
 
           ],
         ),
+      ),
+    );
+  }
+
+  //
+  // CRIAR CONTA no Firebase Auth
+  //
+  void criarConta(nome, email, senha) {
+    FirebaseAuth.instance
+      .createUserWithEmailAndPassword(email: email, password: senha,)
+      .then((value) {
+        exibirMensagem('Cadastro de usuário concluido!');
+        Navigator.pushReplacementNamed(context, 'login');
+        }
+      ).catchError((erro){
+        if (erro.code == 'email-already-in-use'){
+          exibirMensagem('ERRO: O email informado está em uso.');
+        }else if (erro.code == 'invalid-email'){
+          exibirMensagem('ERRO: Email inválido.');
+        }else{
+          exibirMensagem('ERRO: ${erro.message}');
+        }
+      }
+    );
+  }
+
+  void exibirMensagem(msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        duration: Duration(seconds: 2),
       ),
     );
   }

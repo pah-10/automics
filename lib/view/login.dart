@@ -17,10 +17,15 @@ class _LoginState extends State<Login> {
   var txtSenha = TextEditingController();
   bool isLoading = false;
   bool manterLogado = false;
+  String NomeUse = "";
 
   @override
   Widget build(BuildContext context) {
+
+    NomeUse = ModalRoute.of(context)!.settings.arguments.toString();
+
     return Scaffold(
+
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         margin: EdgeInsets.fromLTRB(
@@ -131,7 +136,7 @@ class _LoginState extends State<Login> {
           .signInWithEmailAndPassword(email: email, password: senha)
           .then((value) {
         Navigator.pushReplacementNamed(context, 'menu');
-        exibirMensagem('Bem vindo ' + txtUsuario.text + '!');
+        exibirMensagem('Bem vindo ' + NomeUse + '!');
       }).catchError((erro) {
         if (erro.code == 'user-not-found' ||
             erro.code == 'wrong-password' ||

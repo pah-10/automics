@@ -2,6 +2,7 @@
 // TELA CADASTRO CLIENTES
 //
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:automics/data/class.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,22 @@ class TelaCliente extends StatefulWidget {
 
 class _TelaClienteState extends State<TelaCliente> {
   //lista dinâmica para armazenamento dos clientes
+  
+  
   var listaClientes = <Cliente>[];
+  //
+  // RETORNAR um ÚNICO DOCUMENTO a partir do ID
+  //
+  getDocumentById(id) async{
+    await FirebaseFirestore.instance.collection('Clientes')
+      .doc(id).get().then((doc) {
+        txtCPF.text = doc.get('CPF');
+        txtDtNascimento.text = doc.get('Data de Nascimento');
+        txtEmail.text = doc.get('Email');
+        txtCidade.text = doc.get('Endereço');
+        txtNome.text = doc.get('Nome');
+      });
+  }
 
   //variaveis que receberam os valores dos inputs
   var txtNome = TextEditingController();
@@ -27,6 +43,7 @@ class _TelaClienteState extends State<TelaCliente> {
   //Pré-cadastro de clientes
   @override 
   void initState() {
+    
     listaClientes.add(Cliente('Paola paulina de jesus santa Capita', '000.000.000-00', '07/08/2002', '(16) 99999-9999', 'paola@capita', 'Jaboticabal, SP'),);
     listaClientes.add(Cliente('Breno Murige', '000.000.000-00', '12/11/2001', '(16) 11111-1111', 'breno@murige', 'Ribeirão Preto, SP'),);
     listaClientes.add(Cliente('Lucas Silva', '000.000.000-00', '01/01/2001', '(11) 00000-0000', 'lucas@sksxkmilva', 'São Paulo, SP'),);
@@ -235,9 +252,17 @@ class _TelaClienteState extends State<TelaCliente> {
                                   txtDtNascimento.text,
                                   txtTelefone.text,
                                   txtEmail.text,
-                                  txtCidade.text));
+                                   txtCidade.text));
 
-                              txtNome.clear();
+                                   FirebaseFirestore.instance.collection('Cliente').add({
+                                    'CPF': txtCPF.text,
+                                    'Data de Nascimento': txtDtNascimento.text,
+                                    'Email': txtEmail.text,
+                                    'Endereço': txtCidade.text,
+                                    'Nome': txtNome.text,
+                                    });
+
+                             txtNome.clear();
                               txtCPF.clear();
                               txtDtNascimento.clear();
                               txtTelefone.clear();
@@ -275,3 +300,4 @@ class _TelaClienteState extends State<TelaCliente> {
     );
   }
 }
+

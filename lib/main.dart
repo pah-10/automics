@@ -38,7 +38,7 @@ Future <void> main() async {
       ),
 
       //rotas de navegação
-      initialRoute: 'inicio',
+      initialRoute: 'menu',
       routes: {
         'inicio': (context) => Inicial(),
         'login': (context) => Login(),

@@ -2,7 +2,8 @@
 // TELA CADASTRO DE USUARIOS MECANICOS
 //
 
-import 'package:automics/data/class.dart';
+//import 'package:automics/data/class.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -123,8 +124,16 @@ class _CadastroState extends State<Cadastro> {
     FirebaseAuth.instance
       .createUserWithEmailAndPassword(email: email, password: senha,)
       .then((value) {
+
         exibirMensagem('Cadastro de usuário concluido!');
-        Navigator.pushReplacementNamed(context, 'login');
+
+        FirebaseFirestore.instance.collection('Usuarios').add({
+        'nome': nome,
+        'email': email,
+        });
+
+        
+        Navigator.pushReplacementNamed(context, 'login', arguments: nome);
         }
       ).catchError((erro){
         if (erro.code == 'email-already-in-use'){

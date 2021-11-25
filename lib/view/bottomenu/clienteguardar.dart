@@ -1,61 +1,72 @@
 //
-// TELA CADASTRO VEICULO
+// TELA CADASTRO CLIENTESguardar
 //
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:automics/data/class.dart';
 import 'package:flutter/material.dart';
 
-class TelaVeiculo extends StatefulWidget {
-  const TelaVeiculo({Key? key}) : super(key: key);
+class TelaCliente extends StatefulWidget {
+  const TelaCliente({Key? key}) : super(key: key);
 
   @override
-  _TelaVeiculoState createState() => _TelaVeiculoState();
+  _TelaClienteState createState() => _TelaClienteState();
 }
-//opções do radio
 
-class _TelaVeiculoState extends State<TelaVeiculo> {
-  //lista dinâmica para armazenamento dos carros
-  var listaVeiculo = <Veiculo>[];
+class _TelaClienteState extends State<TelaCliente> {
+  late CollectionReference clientes;
 
+  //lista dinâmica para armazenamento dos clientes
+  var listaClientes = <Cliente>[];
   //
   // RETORNAR um ÚNICO DOCUMENTO a partir do ID
   //
   getDocumentById(id) async {
     await FirebaseFirestore.instance
-        .collection('Veiculo')
+        .collection('Clientes')
         .doc(id)
         .get()
         .then((doc) {
-      txtAno.text = doc.get('Ano');
-      txtCor.text = doc.get('Cor');
-      txtKm.text = doc.get('KM');
-      txtMarca.text = doc.get('Marca');
-      txtModelo.text = doc.get('Modelo');
-      txtPlaca.text = doc.get('Placa');
+      txtNome.text = doc.get('Nome');
+      txtCPF.text = doc.get('CPF');
+      txtDtNascimento.text = doc.get('Data de Nascimento');
+      txtEmail.text = doc.get('Email');
+      txtCidade.text = doc.get('Endereço');
+      txtTelefone.text = doc.get('Telefone');
     });
   }
 
-  //retornar a tarefa adicionada pelo usuário
-  var txtPlaca = TextEditingController();
-  var txtModelo = TextEditingController();
-  var txtMarca = TextEditingController();
-  var txtAno = TextEditingController();
-  var txtKm = TextEditingController();
-  var txtCor = TextEditingController();
+  //variaveis que receberam os valores dos inputs
+  var txtNome = TextEditingController();
+  var txtCPF = TextEditingController();
+  var txtDtNascimento = TextEditingController();
+  var txtEmail = TextEditingController();
+  var txtCidade = TextEditingController();
+  var txtTelefone = TextEditingController();
 
+  //Pré-cadastro de clientes
   @override
   void initState() {
-    listaVeiculo.add(Veiculo('AFL-2223', 'Rebel', 'Honda', '2010', '500',
-        'Preto' /*, OpcoesRadio.moto*/));
-    listaVeiculo.add(Veiculo('FUO-0754', 'Fiat Uno', 'Branco', '2000', '1000',
-        'Branco' /*, OpcoesRadio.carro*/));
-    listaVeiculo.add(Veiculo('LUQ-3165', 'Davidson', 'Honda', '2021', '0',
-        'Cinza' /*, OpcoesRadio.moto*/));
-    listaVeiculo.add(Veiculo('HVB-6010', 'Classe G SUV', 'Mercedes', '2019',
-        '700', 'Musgo' /*, OpcoesRadio.carro*/));
+    listaClientes.add(
+      Cliente('Paola paulina de jesus santa Capita', '000.000.000-00',
+          '07/08/2002', '(16) 99999-9999', 'paola@capita', 'Jaboticabal, SP'),
+    );
+    listaClientes.add(
+      Cliente('Breno Murige', '000.000.000-00', '12/11/2001', '(16) 11111-1111',
+          'breno@murige', 'Ribeirão Preto, SP'),
+    );
+    listaClientes.add(
+      Cliente('Lucas Silva', '000.000.000-00', '01/01/2001', '(11) 00000-0000',
+          'lucas@sksxkmilva', 'São Paulo, SP'),
+    );
+    listaClientes.add(
+      Cliente('Maria Clara Costa', '000.000.000-00', '08/08/08',
+          '(15) 77777-7777', 'maria@silva', 'Franca, SP'),
+    );
 
     super.initState();
+
+    clientes = FirebaseFirestore.instance.collection('Cliente');
   }
 
   @override
@@ -64,14 +75,12 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
       body: Container(
         padding: EdgeInsets.all(30),
 
-        //
-        // ListView
-        //
+        // Listagem dos clientes
         child: ListView.builder(
           //quantidade de elementos da lista
-          itemCount: listaVeiculo.length,
+          itemCount: listaClientes.length,
 
-          //definir a aparência dos elementos
+          //defini a aparência dos elementos
           itemBuilder: (context, index) {
             return Card(
               color: Colors.grey.shade100,
@@ -82,7 +91,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
               ),
               child: ListTile(
                 title: Text(
-                  listaVeiculo[index].placa,
+                  listaClientes[index].nome,
                   style: TextStyle(
                       fontSize: 20, color: Theme.of(context).primaryColor),
                 ),
@@ -97,36 +106,30 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.featured_play_list_outlined,
+                          Icon(Icons.badge_outlined,
                               color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].modelo)
+                          Text(listaClientes[index].cpf),
                         ],
                       ),
                       Row(
                         children: [
-                          Icon(Icons.featured_video_outlined,
+                          Icon(Icons.phone_outlined,
                               color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].marca),
+                          Text(listaClientes[index].telefone),
                         ],
                       ),
                       Row(
                         children: [
-                          Icon(Icons.event_sharp, color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].ano),
+                          Icon(Icons.alternate_email_outlined,
+                              color: Colors.grey.shade500),
+                          Text(listaClientes[index].email),
                         ],
                       ),
                       Row(
                         children: [
-                          Icon(Icons.follow_the_signs_outlined,
+                          Icon(Icons.place_outlined,
                               color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].km),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.format_color_fill_outlined,
-                              color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].cor),
+                          Text(listaClientes[index].endereco),
                         ],
                       ),
                     ],
@@ -139,21 +142,21 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text('Deseja mesmo remover este veiculo?',
+                          title: Text('Deseja mesmo remover este cliente?',
                               style: TextStyle(fontSize: 20)),
-                          content: Icon(Icons.taxi_alert,
+                          content: Icon(Icons.attribution,
                               color: Theme.of(context).primaryColor, size: 50),
                           actions: [
                             TextButton(
                               child: Text('Remover'),
                               onPressed: () {
                                 setState(() {
-                                  listaVeiculo.removeAt(index);
+                                  listaClientes.removeAt(index);
 
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
                                     content:
-                                        Text('Veiculo removido com sucesso'),
+                                        Text('Cliente removido com sucesso'),
                                     duration: Duration(seconds: 2),
                                   ));
                                 });
@@ -179,7 +182,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
       ),
 
       //
-      // ADICIONAR NOVOS VEICULOS
+      // Adicionar novos clientes
       //
 
       floatingActionButton: FloatingActionButton(
@@ -190,10 +193,8 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
               builder: (context) {
                 return AlertDialog(
                   title: Text(
-                    'Adicionar Veiculo',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
+                    'Adicionar Cliente',
+                    style: TextStyle(fontSize: 20),
                     textAlign: TextAlign.center,
                   ),
                   content: Container(
@@ -202,51 +203,51 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextField(
-                            controller: txtPlaca,
-                            maxLength: 8,
+                            maxLength: 60,
+                            controller: txtNome,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
-                              labelText: "Placa",
+                              labelText: "Nome Completo",
                             ),
                           ),
                           TextField(
-                            controller: txtModelo,
-                            maxLength: 30,
+                            maxLength: 14,
+                            controller: txtCPF,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
-                              labelText: "Modelo",
+                              labelText: "CPF",
                             ),
                           ),
                           TextField(
-                            controller: txtMarca,
-                            maxLength: 30,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "Marca",
-                            ),
-                          ),
-                          TextField(
-                            controller: txtAno,
-                            maxLength: 4,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "Ano",
-                            ),
-                          ),
-                          TextField(
-                            controller: txtKm,
                             maxLength: 10,
+                            controller: txtDtNascimento,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
-                              labelText: "KM rodados",
+                              labelText: "Data nascimento",
                             ),
                           ),
                           TextField(
-                            controller: txtCor,
-                            maxLength: 20,
+                            maxLength: 14,
+                            controller: txtTelefone,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
-                              labelText: "Cor",
+                              labelText: "Telefone",
+                            ),
+                          ),
+                          TextField(
+                            maxLength: 30,
+                            controller: txtEmail,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Email",
+                            ),
+                          ),
+                          TextField(
+                            maxLength: 30,
+                            controller: txtCidade,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Cidade",
                             ),
                           ),
                         ],
@@ -260,39 +261,37 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                         setState(
                           () {
                             var msg = '';
-                            if (txtPlaca.text.isNotEmpty &&
-                                txtModelo.text.isNotEmpty &&
-                                txtMarca.text.isNotEmpty &&
-                                txtAno.text.isNotEmpty &&
-                                txtKm.text.isNotEmpty &&
-                                txtCor.text.isNotEmpty) {
-                              listaVeiculo.add(
-                                Veiculo(
-                                    txtPlaca.text,
-                                    txtModelo.text,
-                                    txtMarca.text,
-                                    txtAno.text,
-                                    txtKm.text,
-                                    txtCor.text /*, OpcoesRadio.carro*/),
+                            if (txtNome.text.isNotEmpty &&
+                                txtCPF.text.isNotEmpty &&
+                                txtDtNascimento.text.isNotEmpty &&
+                                txtTelefone.text.isNotEmpty &&
+                                txtEmail.text.isNotEmpty &&
+                                txtCidade.text.isNotEmpty) {
+                              listaClientes.add(Cliente(
+                                  txtNome.text,
+                                  txtCPF.text,
+                                  txtDtNascimento.text,
+                                  txtTelefone.text,
+                                  txtEmail.text,
+                                  txtCidade.text));
+
+                              criarCliente(
+                                txtNome.text,
+                                txtCPF.text,
+                                txtDtNascimento.text,
+                                txtEmail.text,
+                                txtCidade.text,
+                                txtTelefone.text,
                               );
 
-                              criarVeiculo(
-                                txtAno.text,
-                                txtCor.text,
-                                txtKm.text,
-                                txtMarca.text,
-                                txtModelo.text,
-                                txtPlaca.text,
-                              );
+                              txtNome.clear();
+                              txtCPF.clear();
+                              txtDtNascimento.clear();
+                              txtTelefone.clear();
+                              txtEmail.clear();
+                              txtCidade.clear();
 
-                              txtPlaca.clear();
-                              txtModelo.clear();
-                              txtMarca.clear();
-                              txtAno.clear();
-                              txtKm.clear();
-                              txtCor.clear();
-
-                              msg = 'Carro adicionado com sucesso.';
+                              msg = 'Cliente adicionada com sucesso.';
                             } else {
                               msg = 'Erro: Preencha todos os campos!';
                             }
@@ -325,14 +324,14 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
   //
   // CRIAR CONTA no Firebase Auth
   //
-  void criarVeiculo(ano, cor, km, marca, modelo, placa) {
-    FirebaseFirestore.instance.collection('Veiculo').add({
-      'Ano': ano,
-      'Cor': cor,
-      'KM': km,
-      'Marca': marca,
-      'Modelo': modelo,
-      'Placa': placa,
+  void criarCliente(nome, cpf, dtNascimento, email, endereco, telefone) {
+    FirebaseFirestore.instance.collection('Cliente').add({
+      'Nome': nome,
+      'CPF': cpf,
+      'Data de Nascimento': dtNascimento,
+      'Email': email,
+      'Endereço': endereco,
+      'Telefone': telefone,
     });
   }
 }

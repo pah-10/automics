@@ -14,42 +14,165 @@ class TelaCliente extends StatefulWidget {
 }
 
 class _TelaClienteState extends State<TelaCliente> {
+  late CollectionReference clientes;
+
   //lista dinâmica para armazenamento dos clientes
-  
-  
   var listaClientes = <Cliente>[];
+
   //
   // RETORNAR um ÚNICO DOCUMENTO a partir do ID
   //
-  getDocumentById(id) async{
-    await FirebaseFirestore.instance.collection('Clientes')
-      .doc(id).get().then((doc) {
-        txtCPF.text = doc.get('CPF');
-        txtDtNascimento.text = doc.get('Data de Nascimento');
-        txtEmail.text = doc.get('Email');
-        txtCidade.text = doc.get('Endereço');
-        txtNome.text = doc.get('Nome');
-      });
+  getDocumentById(id) async {
+    await FirebaseFirestore.instance
+        .collection('Clientes')
+        .doc(id)
+        .get()
+        .then((doc) {
+      txtNome.text = doc.get('Nome');
+      txtCPF.text = doc.get('CPF');
+      txtDtNascimento.text = doc.get('Data de Nascimento');
+      txtEmail.text = doc.get('Email');
+      txtCidade.text = doc.get('Endereço');
+      txtTelefone.text = doc.get('Telefone');
+    });
   }
 
   //variaveis que receberam os valores dos inputs
   var txtNome = TextEditingController();
   var txtCPF = TextEditingController();
   var txtDtNascimento = TextEditingController();
-  var txtTelefone = TextEditingController();
   var txtEmail = TextEditingController();
   var txtCidade = TextEditingController();
+  var txtTelefone = TextEditingController();
 
   //Pré-cadastro de clientes
-  @override 
+  @override
   void initState() {
-    
-    listaClientes.add(Cliente('Paola paulina de jesus santa Capita', '000.000.000-00', '07/08/2002', '(16) 99999-9999', 'paola@capita', 'Jaboticabal, SP'),);
-    listaClientes.add(Cliente('Breno Murige', '000.000.000-00', '12/11/2001', '(16) 11111-1111', 'breno@murige', 'Ribeirão Preto, SP'),);
-    listaClientes.add(Cliente('Lucas Silva', '000.000.000-00', '01/01/2001', '(11) 00000-0000', 'lucas@sksxkmilva', 'São Paulo, SP'),);
-    listaClientes.add(Cliente('Maria Clara Costa', '000.000.000-00', '08/08/08', '(15) 77777-7777', 'maria@silva', 'Franca, SP'),);
-    
+    /*
+    listaClientes.add(
+      Cliente('Paola paulina de jesus santa Capita', '000.000.000-00',
+          '07/08/2002', '(16) 99999-9999', 'paola@capita', 'Jaboticabal, SP'),
+    );
+    listaClientes.add(
+      Cliente('Breno Murige', '000.000.000-00', '12/11/2001', '(16) 11111-1111',
+          'breno@murige', 'Ribeirão Preto, SP'),
+    );
+    listaClientes.add(
+      Cliente('Lucas Silva', '000.000.000-00', '01/01/2001', '(11) 00000-0000',
+          'lucas@sksxkmilva', 'São Paulo, SP'),
+    );
+    listaClientes.add(
+      Cliente('Maria Clara Costa', '000.000.000-00', '08/08/08',
+          '(15) 77777-7777', 'maria@silva', 'Franca, SP'),
+    );*/
+
     super.initState();
+
+    clientes = FirebaseFirestore.instance.collection('Cliente');
+  }
+
+  exibirItemColecao(item) {
+    String cpf = item.data()['CPF'];
+    String nome = item.data()['Nome'];
+    String dtNascimento = item.data()['Data de Nascimento'];
+    String email = item.data()['Email'];
+    String endereco = item.data()['Endereço'];
+    String telefone = item.data()['Telefone'];
+
+    ListTile(
+      title: Text(
+        //listaClientes[index].
+        nome,
+        style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),
+      ),
+      subtitle: Container(
+        margin: EdgeInsets.fromLTRB(
+          15,
+          10,
+          15,
+          10,
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(Icons.badge_outlined, color: Colors.grey.shade500),
+                Text(//listaClientes[index].
+                    cpf),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.date_range_outlined, color: Colors.grey.shade500),
+                Text(//listaClientes[index].
+                    dtNascimento),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.phone_outlined, color: Colors.grey.shade500),
+                Text(//listaClientes[index].
+                    telefone),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.alternate_email_outlined,
+                    color: Colors.grey.shade500),
+                Text(//listaClientes[index].
+                    email),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.place_outlined, color: Colors.grey.shade500),
+                Text(//listaClientes[index].
+                    endereco),
+              ],
+            ),
+          ],
+        ),
+      ),
+      trailing: IconButton(
+        icon: Icon(Icons.delete_outline, color: Colors.red.shade500),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Deseja mesmo remover este cliente?',
+                    style: TextStyle(fontSize: 20)),
+                content: Icon(Icons.attribution,
+                    color: Theme.of(context).primaryColor, size: 50),
+                actions: [
+                  TextButton(
+                    child: Text('Remover'),
+                    onPressed: () {
+                      setState(() {
+                        clientes.doc(item.id).delete();
+                        //listaClientes.removeAt(index);
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Cliente removido com sucesso'),
+                          duration: Duration(seconds: 2),
+                        ));
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Cancelar'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -59,103 +182,40 @@ class _TelaClienteState extends State<TelaCliente> {
         padding: EdgeInsets.all(30),
 
         // Listagem dos clientes
-        child: ListView.builder(
-          //quantidade de elementos da lista
-          itemCount: listaClientes.length,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: clientes.snapshots(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return const Center(
+                    child: Text('Não foi possível conectar ao Firestore'),
+                  );
 
-          //defini a aparência dos elementos
-          itemBuilder: (context, index) {
-            return Card(
-              color: Colors.grey.shade100,
-              shadowColor: Colors.blue,
-              elevation: 20,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),),
+                case ConnectionState.waiting:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
 
-              child: ListTile(
-                title: Text(listaClientes[index].nome,style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),),
-                subtitle: Container(
-                  margin: EdgeInsets.fromLTRB(15, 10, 15, 10,),
+                default:
+                  final dados = snapshot.requireData;
+                  return ListView.builder(
+                      //quantidade de elementos da lista
+                      itemCount: dados.size,
 
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.badge_outlined,color: Colors.grey.shade500),
-                          Text(listaClientes[index].cpf),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Icon(Icons.phone_outlined,color: Colors.grey.shade500),
-                          Text(listaClientes[index].telefone),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Icon(Icons.alternate_email_outlined, color: Colors.grey.shade500),
-                          Text(listaClientes[index].email),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Icon(Icons.place_outlined,color: Colors.grey.shade500),
-                          Text(listaClientes[index].endereco),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                trailing: IconButton(
-                  icon: Icon(Icons.delete_outline, color: Colors.red.shade500),
-
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          
-                          title: Text('Deseja mesmo remover este cliente?', style: TextStyle(fontSize: 20)),
-
-                          content: Icon(Icons.attribution, color: Theme.of(context).primaryColor, size: 50),
-
-                          actions: [
-                            TextButton(
-                              child: Text('Remover'),
-                              onPressed: () {
-                                setState(() {
-                                  listaClientes.removeAt(index);
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Cliente removido com sucesso'),
-                                      duration: Duration(seconds: 2),
-                                    )
-                                  );  
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-
-                            TextButton(
-                              child: Text('Cancelar'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
+                      //defini a aparência dos elementos
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: Colors.grey.shade100,
+                          shadowColor: Colors.blue,
+                          elevation: 20,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: exibirItemColecao(dados.docs[index]),
                         );
-                      },
-                    );
-                  },
-                ),
-              ),
-            );
-          },
-        ),
+                      });
+              }
+            }),
       ),
 
       //
@@ -169,76 +229,74 @@ class _TelaClienteState extends State<TelaCliente> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: Text('Adicionar Cliente', style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
-
+                  title: Text(
+                    'Adicionar Cliente',
+                    style: TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
                   content: Container(
                     child: SingleChildScrollView(
                       child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        TextField(
-                          maxLength: 60,
-                          controller: txtNome,
-                          style: TextStyle(fontSize: 15),
-                          decoration: InputDecoration(
-                            labelText: "Nome Completo",
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextField(
+                            maxLength: 60,
+                            controller: txtNome,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Nome Completo",
+                            ),
                           ),
-                        ),
-
-                        TextField(
-                          maxLength: 14,
-                          controller: txtCPF,
-                          style: TextStyle(fontSize: 15),
-                          decoration: InputDecoration(
-                            labelText: "CPF",
+                          TextField(
+                            maxLength: 14,
+                            controller: txtCPF,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "CPF",
+                            ),
                           ),
-                        ),
-
-                        TextField(
-                          maxLength: 10,
-                          controller: txtDtNascimento,
-                          style: TextStyle(fontSize: 15),
-                          decoration: InputDecoration(
-                            labelText: "Data nascimento",
+                          TextField(
+                            maxLength: 10,
+                            controller: txtDtNascimento,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Data nascimento",
+                            ),
                           ),
-                        ),
-
-                        TextField(
-                          maxLength: 14,
-                          controller: txtTelefone,
-                          style: TextStyle(fontSize: 15),
-                          decoration: InputDecoration(
-                            labelText: "Telefone",
+                          TextField(
+                            maxLength: 14,
+                            controller: txtTelefone,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Telefone",
+                            ),
                           ),
-                        ),
-
-                        TextField(
-                          maxLength: 30,
-                          controller: txtEmail,
-                          style: TextStyle(fontSize: 15),
-                          decoration: InputDecoration(
-                            labelText: "Email",
+                          TextField(
+                            maxLength: 30,
+                            controller: txtEmail,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Email",
+                            ),
                           ),
-                        ),
-                        
-                        TextField(
-                          maxLength: 30,
-                          controller: txtCidade,
-                          style: TextStyle(fontSize: 15),
-                          decoration: InputDecoration(
-                            labelText: "Cidade",
+                          TextField(
+                            maxLength: 30,
+                            controller: txtCidade,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Cidade",
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
                   actions: [
                     TextButton(
                       child: Text('ok'),
                       onPressed: () {
-                        setState(() {
+                        setState(
+                          () {
                             var msg = '';
                             if (txtNome.text.isNotEmpty &&
                                 txtCPF.text.isNotEmpty &&
@@ -252,17 +310,18 @@ class _TelaClienteState extends State<TelaCliente> {
                                   txtDtNascimento.text,
                                   txtTelefone.text,
                                   txtEmail.text,
-                                   txtCidade.text));
+                                  txtCidade.text));
 
-                                   FirebaseFirestore.instance.collection('Cliente').add({
-                                    'CPF': txtCPF.text,
-                                    'Data de Nascimento': txtDtNascimento.text,
-                                    'Email': txtEmail.text,
-                                    'Endereço': txtCidade.text,
-                                    'Nome': txtNome.text,
-                                    });
+                              criarCliente(
+                                txtNome.text,
+                                txtCPF.text,
+                                txtDtNascimento.text,
+                                txtEmail.text,
+                                txtCidade.text,
+                                txtTelefone.text,
+                              );
 
-                             txtNome.clear();
+                              txtNome.clear();
                               txtCPF.clear();
                               txtDtNascimento.clear();
                               txtTelefone.clear();
@@ -271,8 +330,7 @@ class _TelaClienteState extends State<TelaCliente> {
 
                               msg = 'Cliente adicionada com sucesso.';
                             } else {
-                              msg =
-                                  'Erro: Preencha todos os campos!';
+                              msg = 'Erro: Preencha todos os campos!';
                             }
 
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -299,5 +357,18 @@ class _TelaClienteState extends State<TelaCliente> {
       ),
     );
   }
-}
 
+  //
+  // CRIAR CONTA no Firebase Auth
+  //
+  void criarCliente(nome, cpf, dtNascimento, email, endereco, telefone) {
+    FirebaseFirestore.instance.collection('Cliente').add({
+      'Nome': nome,
+      'CPF': cpf,
+      'Data de Nascimento': dtNascimento,
+      'Email': email,
+      'Endereço': endereco,
+      'Telefone': telefone,
+    });
+  }
+}

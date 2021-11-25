@@ -7,7 +7,7 @@ import 'package:automics/view/sobre.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-Future <void> main() async {
+Future<void> main() async {
   //
   // INICIALIZAR OS Plugins
   //
@@ -23,12 +23,10 @@ Future <void> main() async {
       theme: ThemeData(
         primaryColor: Color(0xFF00778D),
         backgroundColor: Color(0xFFC4C4C4),
-
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Color(0xFF00778D),
           selectionColor: Color(0xFF00778D),
         ),
-        
         textTheme: TextTheme(
           headline1: TextStyle(
             fontFamily: 'Raleway',
@@ -38,7 +36,7 @@ Future <void> main() async {
       ),
 
       //rotas de navegação
-      initialRoute: 'menu',
+      initialRoute: 'inicio',
       routes: {
         'inicio': (context) => Inicial(),
         'login': (context) => Login(),

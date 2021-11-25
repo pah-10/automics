@@ -1,6 +1,7 @@
 //
 // TELA LOGIN
 //
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -13,19 +14,31 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   //Variaveis de controle do login
-  var txtUsuario = TextEditingController();
+  var txtEmail = TextEditingController();
   var txtSenha = TextEditingController();
+  String txtHash = "";
+  String txtNome = "";
   bool isLoading = false;
   bool manterLogado = false;
   String NomeUse = "";
 
+  getDocumentById(id) async {
+    await FirebaseFirestore.instance
+        .collection('Usuarios')
+        .doc(id)
+        .get()
+        .then((doc) {
+      txtNome = doc.get('Nome');
+      txtEmail.text = doc.get('Email');
+      txtHash = doc.get('Hash');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
     NomeUse = ModalRoute.of(context)!.settings.arguments.toString();
 
     return Scaffold(
-
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         margin: EdgeInsets.fromLTRB(
@@ -54,7 +67,7 @@ class _LoginState extends State<Login> {
               height: 20,
             ),
             TextField(
-              controller: txtUsuario,
+              controller: txtEmail,
               decoration: InputDecoration(
                 icon: Icon(Icons.email), //icon at head of input
                 labelText: "Email",
@@ -107,9 +120,9 @@ class _LoginState extends State<Login> {
                     () {
                       bool isLoading = true;
 
-                      if (txtUsuario.text.isNotEmpty &&
+                      if (txtEmail.text.isNotEmpty &&
                           txtSenha.text.isNotEmpty) {
-                        login(txtUsuario.text, txtSenha.text);
+                        login(txtEmail.text, txtSenha.text, NomeUse);
                       } else {
                         exibirMensagem('Erro: Preencha todos os campos!');
                       }
@@ -130,13 +143,13 @@ class _LoginState extends State<Login> {
   //
   //LOGIN COM O FIREBASE
   //
-  void login(email, senha) {
+  void login(email, senha, nome) {
     FirebaseAuth.instance.setPersistence(Persistence.SESSION).then((value) {
       FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: senha)
           .then((value) {
         Navigator.pushReplacementNamed(context, 'menu');
-        exibirMensagem('Bem vindo ' + NomeUse + '!');
+        exibirMensagem('Bem vindo ' + nome + '!');
       }).catchError((erro) {
         if (erro.code == 'user-not-found' ||
             erro.code == 'wrong-password' ||

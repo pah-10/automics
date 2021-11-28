@@ -1,9 +1,8 @@
 //
-// TELA CADASTRO VEICULO
+// TELA DE VEICULOS
 //
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:automics/data/class.dart';
 import 'package:flutter/material.dart';
 
 class TelaVeiculo extends StatefulWidget {
@@ -15,28 +14,9 @@ class TelaVeiculo extends StatefulWidget {
 //opções do radio
 
 class _TelaVeiculoState extends State<TelaVeiculo> {
-  //lista dinâmica para armazenamento dos carros
-  var listaVeiculo = <Veiculo>[];
+  //Referenciar a colecao do Firestore
+  late CollectionReference veiculos;
 
-  //
-  // RETORNAR um ÚNICO DOCUMENTO a partir do ID
-  //
-  getDocumentById(id) async {
-    await FirebaseFirestore.instance
-        .collection('Veiculo')
-        .doc(id)
-        .get()
-        .then((doc) {
-      txtAno.text = doc.get('Ano');
-      txtCor.text = doc.get('Cor');
-      txtKm.text = doc.get('KM');
-      txtMarca.text = doc.get('Marca');
-      txtModelo.text = doc.get('Modelo');
-      txtPlaca.text = doc.get('Placa');
-    });
-  }
-
-  //retornar a tarefa adicionada pelo usuário
   var txtPlaca = TextEditingController();
   var txtModelo = TextEditingController();
   var txtMarca = TextEditingController();
@@ -46,142 +26,159 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
 
   @override
   void initState() {
-    listaVeiculo.add(Veiculo('AFL-2223', 'Rebel', 'Honda', '2010', '500',
-        'Preto' /*, OpcoesRadio.moto*/));
-    listaVeiculo.add(Veiculo('FUO-0754', 'Fiat Uno', 'Branco', '2000', '1000',
-        'Branco' /*, OpcoesRadio.carro*/));
-    listaVeiculo.add(Veiculo('LUQ-3165', 'Davidson', 'Honda', '2021', '0',
-        'Cinza' /*, OpcoesRadio.moto*/));
-    listaVeiculo.add(Veiculo('HVB-6010', 'Classe G SUV', 'Mercedes', '2019',
-        '700', 'Musgo' /*, OpcoesRadio.carro*/));
-
     super.initState();
+
+    //Instancia o acesso ao banco
+    veiculos = FirebaseFirestore.instance.collection('veiculos');
+  }
+  
+  // Especifica a aparencia de cada elemento da lista
+  exibirItemColecao(item){
+
+    //variaveis que receberam os valores do banco
+    String placa = item.data()['placa'];
+    String modelo = item.data()['modelo'];
+    String marca = item.data()['marca'];
+    String ano = item.data()['ano'];
+    String cor = item.data()['cor'];
+    String km = item.data()['km'];
+
+    return ListTile(
+      title: Text(placa, style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),),
+
+      subtitle: Container(
+        margin: EdgeInsets.fromLTRB(15,10,15,10),
+
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(Icons.featured_play_list_outlined, color: Colors.grey.shade500),
+                Text(modelo),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.featured_video_outlined, color: Colors.grey.shade500),
+                Text(marca),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.calendar_today_outlined, color: Colors.grey.shade500),
+                Text(ano),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.format_color_fill_outlined, color: Colors.grey.shade500),
+                Text(cor),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.follow_the_signs_outlined, color: Colors.grey.shade500),
+                Text(km),
+              ],
+            ),
+          ],
+        ),
+      ),
+      
+      trailing: IconButton(
+        icon: Icon(Icons.delete_outline, color: Colors.red.shade500),
+
+        onPressed: () {
+          showDialog(
+            context: context,
+
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Deseja mesmo remover este veiculo?', style: TextStyle(fontSize: 20)),
+
+                content: Icon(Icons.attribution, color: Theme.of(context).primaryColor, size: 50),
+
+                actions: [
+                  TextButton(
+                    child: Text('Remover'),
+                    
+                    onPressed: () {
+                      setState(() {
+                        veiculos.doc(item.id).delete();
+                        
+                        exibirMensagem('Veiculo removido com sucesso');
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+
+                  TextButton(
+                    child: Text('Cancelar'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      // LISTAR DOCS DA COLECAO
       body: Container(
-        padding: EdgeInsets.all(30),
+        
+        //padding: EdgeInsets.all(30), MOSTRAR ISSO PRO NR
+        child: 
+          StreamBuilder<QuerySnapshot>(
+            
+            //fonte de dados (colecao)
+            stream: veiculos.snapshots(),
 
-        //
-        // ListView
-        //
-        child: ListView.builder(
-          //quantidade de elementos da lista
-          itemCount: listaVeiculo.length,
+            //exibir dados retornados
+            builder: (context, snapshot){
 
-          //definir a aparência dos elementos
-          itemBuilder: (context, index) {
-            return Card(
-              color: Colors.grey.shade100,
-              shadowColor: Colors.blue,
-              elevation: 20,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: ListTile(
-                title: Text(
-                  listaVeiculo[index].placa,
-                  style: TextStyle(
-                      fontSize: 20, color: Theme.of(context).primaryColor),
-                ),
-                subtitle: Container(
-                  margin: EdgeInsets.fromLTRB(
-                    15,
-                    10,
-                    15,
-                    10,
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.featured_play_list_outlined,
-                              color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].modelo)
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.featured_video_outlined,
-                              color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].marca),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.event_sharp, color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].ano),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.follow_the_signs_outlined,
-                              color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].km),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.format_color_fill_outlined,
-                              color: Colors.grey.shade500),
-                          Text(listaVeiculo[index].cor),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete_outline, color: Colors.red.shade500),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Deseja mesmo remover este veiculo?',
-                              style: TextStyle(fontSize: 20)),
-                          content: Icon(Icons.taxi_alert,
-                              color: Theme.of(context).primaryColor, size: 50),
-                          actions: [
-                            TextButton(
-                              child: Text('Remover'),
-                              onPressed: () {
-                                setState(() {
-                                  listaVeiculo.removeAt(index);
+              //verificar o estado da conexao
+              switch(snapshot.connectionState){
 
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content:
-                                        Text('Veiculo removido com sucesso'),
-                                    duration: Duration(seconds: 2),
-                                  ));
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            TextButton(
-                              child: Text('Cancelar'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            );
-          },
-        ),
+                case ConnectionState.none:
+                  return const Center(child: Text('Não foi possível se conectar ao banco de dados'),);
+                
+                case ConnectionState.waiting:
+                  return const Center(child: CircularProgressIndicator(),);
+
+                // se os dados foram recebidos com sucesso
+                default:
+                  final dados = snapshot.requireData;
+                  return ListView.builder(
+                    itemCount: dados.size,
+
+                    itemBuilder: (context, index){
+                      return Card(
+                        color: Colors.grey.shade100,
+
+                        shadowColor: Colors.blue,
+
+                        elevation: 20,
+
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),),
+
+                        child: exibirItemColecao(dados.docs[index]),
+                      );
+                    }
+                  );
+              }
+            }
+          ),
       ),
-
-      //
-      // ADICIONAR NOVOS VEICULOS
-      //
-
+      
+      // Adicionar novos clientes
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () async {
@@ -253,30 +250,15 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                       ),
                     ),
                   ),
-                  actions: [
-                    TextButton(
-                      child: Text('ok'),
-                      onPressed: () {
-                        setState(
-                          () {
-                            var msg = '';
-                            if (txtPlaca.text.isNotEmpty &&
-                                txtModelo.text.isNotEmpty &&
-                                txtMarca.text.isNotEmpty &&
-                                txtAno.text.isNotEmpty &&
-                                txtKm.text.isNotEmpty &&
-                                txtCor.text.isNotEmpty) {
-                              listaVeiculo.add(
-                                Veiculo(
-                                    txtPlaca.text,
-                                    txtModelo.text,
-                                    txtMarca.text,
-                                    txtAno.text,
-                                    txtKm.text,
-                                    txtCor.text /*, OpcoesRadio.carro*/),
-                              );
 
-                              criarVeiculo(
+                actions: [
+                  TextButton(
+                    child: Text('ok'),
+
+                    onPressed: () {
+                      setState(() {
+                          if (txtPlaca.text.isNotEmpty && txtModelo.text.isNotEmpty && txtMarca.text.isNotEmpty && txtAno.text.isNotEmpty && txtCor.text.isNotEmpty && txtKm.text.isNotEmpty){
+                           criarVeiculo(
                                 txtAno.text,
                                 txtCor.text,
                                 txtKm.text,
@@ -292,47 +274,50 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                               txtKm.clear();
                               txtCor.clear();
 
-                              msg = 'Carro adicionado com sucesso.';
-                            } else {
-                              msg = 'Erro: Preencha todos os campos!';
-                            }
+                            exibirMensagem('Cliente adicionada com sucesso.');
+                          } else {
+                            exibirMensagem('Erro: Preencha todos os campos!');
+                          }
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(msg),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    ),
-                    TextButton(
-                      child: Text('cancelar'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-              });
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                  TextButton(
+                    child: Text('cancelar'),
+
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            }
+          );
         },
       ),
     );
   }
 
-  //
-  // CRIAR CONTA no Firebase Auth
-  //
+  // criar veiculo no Firebase Auth
   void criarVeiculo(ano, cor, km, marca, modelo, placa) {
-    FirebaseFirestore.instance.collection('Veiculo').add({
-      'Ano': ano,
-      'Cor': cor,
-      'KM': km,
-      'Marca': marca,
-      'Modelo': modelo,
-      'Placa': placa,
+    FirebaseFirestore.instance.collection('veiculos').add({
+      'ano': ano,
+      'cor': cor,
+      'km': km,
+      'marca': marca,
+      'modelo': modelo,
+      'placa': placa,
     });
+  }
+
+  void exibirMensagem(msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 }

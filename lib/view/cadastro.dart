@@ -78,7 +78,7 @@ class _CadastroState extends State<Cadastro> {
             TextField(
               controller: txtHashCadastro,
               decoration: InputDecoration(
-                icon: Icon(Icons.lock), //icon at head of input
+                icon: Icon(Icons.traffic), //icon at head of input
                 labelText:
                     "Código do seu Banco de Dados", //icon at tail of input
               ),
@@ -117,6 +117,7 @@ class _CadastroState extends State<Cadastro> {
                         txtemailCadastro.clear();
                         txtSenhaCadastro.clear();
                         txtHashCadastro.clear();
+
                       } else {
                         exibirMensagem('ERRO: Preencha todos os campos!');
                       }
@@ -138,21 +139,20 @@ class _CadastroState extends State<Cadastro> {
   // CRIAR CONTA no Firebase Auth
   //
   void criarConta(nome, email, senha, hash) {
+
     FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-      email: email,
-      password: senha,
-    )
+        .createUserWithEmailAndPassword(email: email, password: senha,)
         .then((value) {
       exibirMensagem('Cadastro de usuário concluido!');
 
-      FirebaseFirestore.instance.collection('Usuarios').add({
-        'Nome': nome,
-        'Email': email,
-        'Hash': hash,
+      FirebaseFirestore.instance.collection('usuarios').add({
+        'email': email,
+        'cod': hash,
+        'nome': nome,
       });
 
       Navigator.pushReplacementNamed(context, 'login', arguments: nome);
+      
     }).catchError((erro) {
       if (erro.code == 'email-already-in-use') {
         exibirMensagem('ERRO: O email informado está em uso.');

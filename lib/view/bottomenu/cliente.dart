@@ -1,9 +1,8 @@
 //
-// TELA CADASTRO CLIENTES
+// TELA DE CLIENTES
 //
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:automics/data/class.dart';
 import 'package:flutter/material.dart';
 
 class TelaCliente extends StatefulWidget {
@@ -14,28 +13,9 @@ class TelaCliente extends StatefulWidget {
 }
 
 class _TelaClienteState extends State<TelaCliente> {
+
+  //Referenciar a colecao do Firestore
   late CollectionReference clientes;
-
-  //lista dinâmica para armazenamento dos clientes
-  var listaClientes = <Cliente>[];
-
-  //
-  // RETORNAR um ÚNICO DOCUMENTO a partir do ID
-  //
-  getDocumentById(id) async {
-    await FirebaseFirestore.instance
-        .collection('Clientes')
-        .doc(id)
-        .get()
-        .then((doc) {
-      txtNome.text = doc.get('Nome');
-      txtCPF.text = doc.get('CPF');
-      txtDtNascimento.text = doc.get('Data de Nascimento');
-      txtEmail.text = doc.get('Email');
-      txtCidade.text = doc.get('Endereço');
-      txtTelefone.text = doc.get('Telefone');
-    });
-  }
 
   //variaveis que receberam os valores dos inputs
   var txtNome = TextEditingController();
@@ -45,121 +25,94 @@ class _TelaClienteState extends State<TelaCliente> {
   var txtCidade = TextEditingController();
   var txtTelefone = TextEditingController();
 
-  //Pré-cadastro de clientes
   @override
   void initState() {
-    /*
-    listaClientes.add(
-      Cliente('Paola paulina de jesus santa Capita', '000.000.000-00',
-          '07/08/2002', '(16) 99999-9999', 'paola@capita', 'Jaboticabal, SP'),
-    );
-    listaClientes.add(
-      Cliente('Breno Murige', '000.000.000-00', '12/11/2001', '(16) 11111-1111',
-          'breno@murige', 'Ribeirão Preto, SP'),
-    );
-    listaClientes.add(
-      Cliente('Lucas Silva', '000.000.000-00', '01/01/2001', '(11) 00000-0000',
-          'lucas@sksxkmilva', 'São Paulo, SP'),
-    );
-    listaClientes.add(
-      Cliente('Maria Clara Costa', '000.000.000-00', '08/08/08',
-          '(15) 77777-7777', 'maria@silva', 'Franca, SP'),
-    );*/
+   super.initState();
 
-    super.initState();
-
-    clientes = FirebaseFirestore.instance.collection('Cliente');
+    //Instancia o acesso ao banco
+    clientes = FirebaseFirestore.instance.collection('clientes');
   }
+  
+  // Especifica a aparencia de cada elemento da lista
+  exibirItemColecao(item){
 
-  exibirItemColecao(item) {
-    String cpf = item.data()['CPF'];
-    String nome = item.data()['Nome'];
-    String dtNascimento = item.data()['Data de Nascimento'];
-    String email = item.data()['Email'];
-    String endereco = item.data()['Endereço'];
-    String telefone = item.data()['Telefone'];
+    //variaveis que receberam os valores do banco
+    String nome = item.data()['nome'];
+    String cpf = item.data()['cpf'];
+    String dataNascimento = item.data()['dataNascimento'];
+    String email = item.data()['email'];
+    String telefone = item.data()['telefone'];
+    String endereco = item.data()['endereco'];
 
-    ListTile(
-      title: Text(
-        //listaClientes[index].
-        nome,
-        style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),
-      ),
+    return ListTile(
+      title: Text(nome, style: TextStyle(fontSize: 20, color: Theme.of(context).primaryColor),),
+
       subtitle: Container(
-        margin: EdgeInsets.fromLTRB(
-          15,
-          10,
-          15,
-          10,
-        ),
+        margin: EdgeInsets.fromLTRB(15,10,15,10),
+
         child: Column(
           children: [
             Row(
               children: [
                 Icon(Icons.badge_outlined, color: Colors.grey.shade500),
-                Text(//listaClientes[index].
-                    cpf),
+                Text(cpf),
               ],
             ),
             Row(
               children: [
-                Icon(Icons.date_range_outlined, color: Colors.grey.shade500),
-                Text(//listaClientes[index].
-                    dtNascimento),
+                Icon(Icons.calendar_today_outlined, color: Colors.grey.shade500),
+                Text(dataNascimento),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.email_outlined, color: Colors.grey.shade500),
+                Text(email),
               ],
             ),
             Row(
               children: [
                 Icon(Icons.phone_outlined, color: Colors.grey.shade500),
-                Text(//listaClientes[index].
-                    telefone),
-              ],
-            ),
-            Row(
-              children: [
-                Icon(Icons.alternate_email_outlined,
-                    color: Colors.grey.shade500),
-                Text(//listaClientes[index].
-                    email),
+                Text(telefone),
               ],
             ),
             Row(
               children: [
                 Icon(Icons.place_outlined, color: Colors.grey.shade500),
-                Text(//listaClientes[index].
-                    endereco),
+                Text(endereco),
               ],
             ),
           ],
         ),
       ),
+      
       trailing: IconButton(
         icon: Icon(Icons.delete_outline, color: Colors.red.shade500),
+
         onPressed: () {
           showDialog(
             context: context,
+
             builder: (context) {
               return AlertDialog(
-                title: Text('Deseja mesmo remover este cliente?',
-                    style: TextStyle(fontSize: 20)),
-                content: Icon(Icons.attribution,
-                    color: Theme.of(context).primaryColor, size: 50),
+                title: Text('Deseja mesmo remover este cliente?', style: TextStyle(fontSize: 20)),
+
+                content: Icon(Icons.attribution, color: Theme.of(context).primaryColor, size: 50),
+
                 actions: [
                   TextButton(
                     child: Text('Remover'),
+                    
                     onPressed: () {
                       setState(() {
                         clientes.doc(item.id).delete();
-                        //listaClientes.removeAt(index);
-
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Cliente removido com sucesso'),
-                          duration: Duration(seconds: 2),
-                        ));
+                        
+                        exibirMensagem('Cliente removido com sucesso');
                       });
                       Navigator.pop(context);
                     },
                   ),
+
                   TextButton(
                     child: Text('Cancelar'),
                     onPressed: () {
@@ -178,197 +131,189 @@ class _TelaClienteState extends State<TelaCliente> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      // LISTAR DOCS DA COLECAO
       body: Container(
-        padding: EdgeInsets.all(30),
-
-        // Listagem dos clientes
-        child: StreamBuilder<QuerySnapshot>(
+        
+        //padding: EdgeInsets.all(30), MOSTRAR ISSO PRO NR
+        child: 
+          StreamBuilder<QuerySnapshot>(
+            
+            //fonte de dados (colecao)
             stream: clientes.snapshots(),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
+
+            //exibir dados retornados
+            builder: (context, snapshot){
+
+              //verificar o estado da conexao
+              switch(snapshot.connectionState){
+
                 case ConnectionState.none:
-                  return const Center(
-                    child: Text('Não foi possível conectar ao Firestore'),
-                  );
-
+                  return const Center(child: Text('Não foi possível se conectar ao banco de dados'),);
+                
                 case ConnectionState.waiting:
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator(),);
 
+                // se os dados foram recebidos com sucesso
                 default:
                   final dados = snapshot.requireData;
                   return ListView.builder(
-                      //quantidade de elementos da lista
-                      itemCount: dados.size,
+                    itemCount: dados.size,
 
-                      //defini a aparência dos elementos
-                      itemBuilder: (context, index) {
-                        return Card(
-                          color: Colors.grey.shade100,
-                          shadowColor: Colors.blue,
-                          elevation: 20,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: exibirItemColecao(dados.docs[index]),
-                        );
-                      });
+                    itemBuilder: (context, index){
+                      return Card(
+                        color: Colors.grey.shade100,
+
+                        shadowColor: Colors.blue,
+
+                        elevation: 20,
+
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15),),
+
+                        child: exibirItemColecao(dados.docs[index]),
+                      );
+                    }
+                  );
               }
-            }),
+            }
+          ),
       ),
-
-      //
+      
       // Adicionar novos clientes
-      //
-
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
+
         onPressed: () async {
           await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                    'Adicionar Cliente',
-                    style: TextStyle(fontSize: 20),
-                    textAlign: TextAlign.center,
-                  ),
-                  content: Container(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextField(
-                            maxLength: 60,
-                            controller: txtNome,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "Nome Completo",
-                            ),
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Adicionar Cliente', style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
+
+                content: Container(
+
+                  child: SingleChildScrollView(
+
+                    child: Column(
+
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        TextField(
+                          maxLength: 60,
+                          controller: txtNome,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Nome Completo",
                           ),
-                          TextField(
-                            maxLength: 14,
-                            controller: txtCPF,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "CPF",
-                            ),
+                        ),
+                        TextField(
+                          maxLength: 14,
+                          controller: txtCPF,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "CPF",
                           ),
-                          TextField(
-                            maxLength: 10,
-                            controller: txtDtNascimento,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "Data nascimento",
-                            ),
+                        ),
+                        TextField(
+                          maxLength: 10,
+                          controller: txtDtNascimento,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Data nascimento",
                           ),
-                          TextField(
-                            maxLength: 14,
-                            controller: txtTelefone,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "Telefone",
-                            ),
+                        ),
+                        TextField(
+                          maxLength: 14,
+                          controller: txtTelefone,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Telefone",
                           ),
-                          TextField(
-                            maxLength: 30,
-                            controller: txtEmail,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "Email",
-                            ),
+                        ),
+                        TextField(
+                          maxLength: 30,
+                          controller: txtEmail,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Email",
                           ),
-                          TextField(
-                            maxLength: 30,
-                            controller: txtCidade,
-                            style: TextStyle(fontSize: 15),
-                            decoration: InputDecoration(
-                              labelText: "Cidade",
-                            ),
+                        ),
+                        TextField(
+                          maxLength: 30,
+                          controller: txtCidade,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Cidade",
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  actions: [
-                    TextButton(
-                      child: Text('ok'),
-                      onPressed: () {
-                        setState(
-                          () {
-                            var msg = '';
-                            if (txtNome.text.isNotEmpty &&
-                                txtCPF.text.isNotEmpty &&
-                                txtDtNascimento.text.isNotEmpty &&
-                                txtTelefone.text.isNotEmpty &&
-                                txtEmail.text.isNotEmpty &&
-                                txtCidade.text.isNotEmpty) {
-                              listaClientes.add(Cliente(
-                                  txtNome.text,
-                                  txtCPF.text,
-                                  txtDtNascimento.text,
-                                  txtTelefone.text,
-                                  txtEmail.text,
-                                  txtCidade.text));
+                ),
 
-                              criarCliente(
-                                txtNome.text,
-                                txtCPF.text,
-                                txtDtNascimento.text,
-                                txtEmail.text,
-                                txtCidade.text,
-                                txtTelefone.text,
-                              );
+                actions: [
+                  TextButton(
+                    child: Text('ok'),
 
-                              txtNome.clear();
-                              txtCPF.clear();
-                              txtDtNascimento.clear();
-                              txtTelefone.clear();
-                              txtEmail.clear();
-                              txtCidade.clear();
-
-                              msg = 'Cliente adicionada com sucesso.';
-                            } else {
-                              msg = 'Erro: Preencha todos os campos!';
-                            }
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(msg),
-                                duration: Duration(seconds: 2),
-                              ),
+                    onPressed: () {
+                      setState(() {
+                          if (txtNome.text.isNotEmpty && txtCPF.text.isNotEmpty && txtDtNascimento.text.isNotEmpty && txtTelefone.text.isNotEmpty && txtEmail.text.isNotEmpty && txtCidade.text.isNotEmpty) {
+                            criarCliente(
+                              txtNome.text, txtCPF.text, txtDtNascimento.text, txtEmail.text, txtCidade.text, txtTelefone.text,
                             );
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    ),
-                    TextButton(
-                      child: Text('cancelar'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-              });
+
+                            txtNome.clear();
+                            txtCPF.clear();
+                            txtDtNascimento.clear();
+                            txtTelefone.clear();
+                            txtEmail.clear();
+                            txtCidade.clear();
+
+                            exibirMensagem('Cliente adicionada com sucesso.');
+                          } else {
+                            exibirMensagem('Erro: Preencha todos os campos!');
+                          }
+
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                  TextButton(
+                    child: Text('cancelar'),
+
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            }
+          );
         },
       ),
     );
   }
 
-  //
   // CRIAR CONTA no Firebase Auth
-  //
   void criarCliente(nome, cpf, dtNascimento, email, endereco, telefone) {
-    FirebaseFirestore.instance.collection('Cliente').add({
-      'Nome': nome,
-      'CPF': cpf,
-      'Data de Nascimento': dtNascimento,
-      'Email': email,
-      'Endereço': endereco,
-      'Telefone': telefone,
+    FirebaseFirestore.instance.collection('clientes').add({
+      'nome': nome,
+      'cpf': cpf,
+      'dataNascimento': dtNascimento,
+      'email': email,
+      'endereco': endereco,
+      'telefone': telefone,
     });
+  }
+
+  void exibirMensagem(msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 }

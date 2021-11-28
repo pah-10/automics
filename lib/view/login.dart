@@ -18,9 +18,7 @@ class _LoginState extends State<Login> {
   var txtSenha = TextEditingController();
   String txtHash = "";
   String txtNome = "";
-  bool isLoading = false;
   bool manterLogado = false;
-  String NomeUse = "";
 
   getDocumentById(id) async {
     await FirebaseFirestore.instance
@@ -36,7 +34,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    NomeUse = ModalRoute.of(context)!.settings.arguments.toString();
+    //NomeUse = ModalRoute.of(context)!.settings.arguments.toString();
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -118,11 +116,9 @@ class _LoginState extends State<Login> {
                 onPressed: () {
                   setState(
                     () {
-                      bool isLoading = true;
-
                       if (txtEmail.text.isNotEmpty &&
                           txtSenha.text.isNotEmpty) {
-                        login(txtEmail.text, txtSenha.text, NomeUse);
+                        login(txtEmail.text, txtSenha.text);
                       } else {
                         exibirMensagem('Erro: Preencha todos os campos!');
                       }
@@ -143,13 +139,13 @@ class _LoginState extends State<Login> {
   //
   //LOGIN COM O FIREBASE
   //
-  void login(email, senha, nome) {
+  void login(email, senha) {
     FirebaseAuth.instance.setPersistence(Persistence.SESSION).then((value) {
       FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: senha)
           .then((value) {
         Navigator.pushReplacementNamed(context, 'menu');
-        exibirMensagem('Bem vindo ' + nome + '!');
+        exibirMensagem('Bem vindo!');
       }).catchError((erro) {
         if (erro.code == 'user-not-found' ||
             erro.code == 'wrong-password' ||

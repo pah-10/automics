@@ -24,6 +24,13 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
   var txtKm = TextEditingController();
   var txtCor = TextEditingController();
 
+  getDocumentById(id) async{
+    await FirebaseFirestore.instance.collection('veiculos')
+      .doc(id).get().then((doc) {
+        txtPlaca.text = doc.get('placa');
+      });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -124,6 +131,117 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
           );
         },
       ),
+
+      onTap: () async {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Editar Cliente', style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
+
+                content: Container(
+
+                  child: SingleChildScrollView(
+
+                    child: Column(
+
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        TextField(
+                            controller: txtPlaca,
+                            maxLength: 8,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Placa",
+                            ),
+                          ),
+                          TextField(
+                            controller: txtModelo,
+                            maxLength: 30,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Modelo",
+                            ),
+                          ),
+                          TextField(
+                            controller: txtMarca,
+                            maxLength: 30,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Marca",
+                            ),
+                          ),
+                          TextField(
+                            controller: txtAno,
+                            maxLength: 4,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Ano",
+                            ),
+                          ),
+                          TextField(
+                            controller: txtKm,
+                            maxLength: 10,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "KM rodados",
+                            ),
+                          ),
+                          TextField(
+                            controller: txtCor,
+                            maxLength: 20,
+                            style: TextStyle(fontSize: 15),
+                            decoration: InputDecoration(
+                              labelText: "Cor",
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                actions: [
+                  TextButton(
+                    child: Text('ok'),
+
+                    onPressed: () {
+                      setState(() {
+                        
+                          if (txtPlaca.text.isNotEmpty && txtModelo.text.isNotEmpty && txtMarca.text.isNotEmpty && txtAno.text.isNotEmpty && txtCor.text.isNotEmpty && txtKm.text.isNotEmpty){
+                           editarVeiculo(
+                             item.id,txtAno.text, txtCor.text, txtKm.text, txtMarca.text, txtModelo.text, txtPlaca.text,
+                              );
+
+                              txtPlaca.clear();
+                              txtModelo.clear();
+                              txtMarca.clear();
+                              txtAno.clear();
+                              txtKm.clear();
+                              txtCor.clear();
+
+                            exibirMensagem('Cliente editado com sucesso.');
+                          } else {
+                            exibirMensagem('Erro: Preencha todos os campos!');
+                          }
+
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                  TextButton(
+                    child: Text('cancelar'),
+
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            }
+          );
+        },
     );
   }
 
@@ -303,6 +421,18 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
   // criar veiculo no Firebase Auth
   void criarVeiculo(ano, cor, km, marca, modelo, placa) {
     FirebaseFirestore.instance.collection('veiculos').add({
+      'ano': ano,
+      'cor': cor,
+      'km': km,
+      'marca': marca,
+      'modelo': modelo,
+      'placa': placa,
+    });
+  }
+
+// editar conta no Firebase Auth
+  void editarVeiculo(id, ano, cor, km, marca, modelo, placa) {
+    FirebaseFirestore.instance.collection('veiculos').doc(id).set({
       'ano': ano,
       'cor': cor,
       'km': km,

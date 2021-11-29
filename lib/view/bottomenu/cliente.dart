@@ -25,6 +25,13 @@ class _TelaClienteState extends State<TelaCliente> {
   var txtCidade = TextEditingController();
   var txtTelefone = TextEditingController();
 
+  getDocumentById(id) async{
+    await FirebaseFirestore.instance.collection('clientes')
+      .doc(id).get().then((doc) {
+        txtNome.text = doc.get('nome');
+      });
+  }
+
   @override
   void initState() {
    super.initState();
@@ -125,11 +132,139 @@ class _TelaClienteState extends State<TelaCliente> {
           );
         },
       ),
+
+      onTap: () async {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Editar Cliente', style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
+
+                content: Container(
+
+                  child: SingleChildScrollView(
+
+                    child: Column(
+
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        TextField(
+                          maxLength: 60,
+                          controller: txtNome,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Nome Completo",
+                          ),
+                        ),
+                        TextField(
+                          maxLength: 14,
+                          controller: txtCPF,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "CPF",
+                          ),
+                        ),
+                        TextField(
+                          maxLength: 10,
+                          controller: txtDtNascimento,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Data nascimento",
+                          ),
+                        ),
+                        TextField(
+                          maxLength: 14,
+                          controller: txtTelefone,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Telefone",
+                          ),
+                        ),
+                        TextField(
+                          maxLength: 30,
+                          controller: txtEmail,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Email",
+                          ),
+                        ),
+                        TextField(
+                          maxLength: 30,
+                          controller: txtCidade,
+                          style: TextStyle(fontSize: 15),
+                          decoration: InputDecoration(
+                            labelText: "Cidade",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                actions: [
+                  TextButton(
+                    child: Text('ok'),
+
+                    onPressed: () {
+                      setState(() {
+                        
+                          if (txtNome.text.isNotEmpty && txtCPF.text.isNotEmpty && txtDtNascimento.text.isNotEmpty && txtTelefone.text.isNotEmpty && txtEmail.text.isNotEmpty && txtCidade.text.isNotEmpty) {
+                             
+                            //txtNome = clientes.doc(item.id).get('nome');
+
+                            getDocumentById(item.id);
+
+                           editarCliente(
+                              item.id,txtNome.text, txtCPF.text, txtDtNascimento.text, txtEmail.text, txtCidade.text, txtTelefone.text
+                            );
+
+                            txtNome.clear();
+                            txtCPF.clear();
+                            txtDtNascimento.clear();
+                            txtTelefone.clear();
+                            txtEmail.clear();
+                            txtCidade.clear();
+
+                            exibirMensagem('Cliente editado com sucesso.');
+                          } else {
+                            exibirMensagem('Erro: Preencha todos os campos!');
+                          }
+
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                  TextButton(
+                    child: Text('cancelar'),
+
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            }
+          );
+        },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+
+    /*
+    // RECUPERAR o ID do Café que foi selecionado pelo usuário
+    //
+    var id = ModalRoute.of(context)?.settings.arguments;
+
+    if (id != null){
+      if (txtNome.text.isEmpty && txtPreco.text.isEmpty){
+        getDocumentById(id);
+      }
+    }*/
+
     return Scaffold(
 
       // LISTAR DOCS DA COLECAO
@@ -299,6 +434,18 @@ class _TelaClienteState extends State<TelaCliente> {
   // CRIAR CONTA no Firebase Auth
   void criarCliente(nome, cpf, dtNascimento, email, endereco, telefone) {
     FirebaseFirestore.instance.collection('clientes').add({
+      'nome': nome,
+      'cpf': cpf,
+      'dataNascimento': dtNascimento,
+      'email': email,
+      'endereco': endereco,
+      'telefone': telefone,
+    });
+  }
+
+  // EDITAR CONTA no Firebase Auth
+  void editarCliente(id, nome, cpf, dtNascimento, email, endereco, telefone) {
+    FirebaseFirestore.instance.collection('clientes').doc(id).set({
       'nome': nome,
       'cpf': cpf,
       'dataNascimento': dtNascimento,

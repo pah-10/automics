@@ -5,6 +5,7 @@
 import 'package:automics/view/bottomenu/cliente.dart';
 import 'package:automics/view/bottomenu/veiculo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Menu extends StatefulWidget {
@@ -23,6 +24,17 @@ class _MenuState extends State<Menu> {
 
   //Controlador utilizado para troca o nome da tela no appBar
   String varNomePage = " Clientes";
+
+  //Referenciar a colecao do Firestore
+  late CollectionReference usuarios;
+
+  @override
+  void initState() {
+   super.initState();
+
+    //Instancia o acesso ao banco
+    usuarios = FirebaseFirestore.instance.collection('usuarios');
+  }
 
   @override
   Widget build(BuildContext context) {

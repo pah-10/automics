@@ -8,11 +8,7 @@ class Sobre extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text(
-          'Automics Infos',
-          style: TextStyle(fontFamily: 'Sans Hv It', color: Colors.white),
-        ),
-        //automaticallyImplyLeading: true,
+        title: Text('Automics Infos', style: TextStyle(fontFamily: 'Sans Hv It', color: Colors.white),),
       ),
 
       backgroundColor: Colors.white,

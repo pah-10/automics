@@ -250,11 +250,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
     return Scaffold(
 
       // LISTAR DOCS DA COLECAO
-      body: Container(
-        
-        //padding: EdgeInsets.all(30), MOSTRAR ISSO PRO NR
-        child: 
-          StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<QuerySnapshot>(
             
             //fonte de dados (colecao)
             stream: veiculos.snapshots(),
@@ -294,7 +290,6 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
               }
             }
           ),
-      ),
       
       // Adicionar novos clientes
       floatingActionButton: FloatingActionButton(

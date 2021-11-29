@@ -254,25 +254,10 @@ class _TelaClienteState extends State<TelaCliente> {
   @override
   Widget build(BuildContext context) {
 
-    /*
-    // RECUPERAR o ID do Café que foi selecionado pelo usuário
-    //
-    var id = ModalRoute.of(context)?.settings.arguments;
-
-    if (id != null){
-      if (txtNome.text.isEmpty && txtPreco.text.isEmpty){
-        getDocumentById(id);
-      }
-    }*/
-
     return Scaffold(
 
       // LISTAR DOCS DA COLECAO
-      body: Container(
-        
-        //padding: EdgeInsets.all(30), MOSTRAR ISSO PRO NR
-        child: 
-          StreamBuilder<QuerySnapshot>(
+      body: StreamBuilder<QuerySnapshot>(
             
             //fonte de dados (colecao)
             stream: clientes.snapshots(),
@@ -312,7 +297,6 @@ class _TelaClienteState extends State<TelaCliente> {
               }
             }
           ),
-      ),
       
       // Adicionar novos clientes
       floatingActionButton: FloatingActionButton(

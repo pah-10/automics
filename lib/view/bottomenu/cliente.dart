@@ -17,7 +17,7 @@ class _TelaClienteState extends State<TelaCliente> {
   //Referenciar a colecao do Firestore
   late CollectionReference clientes;
 
-  //variaveis que receberam os valores dos inputs
+  //variaveis de adicao
   var txtNome = TextEditingController();
   var txtCPF = TextEditingController();
   var txtDtNascimento = TextEditingController();
@@ -25,12 +25,13 @@ class _TelaClienteState extends State<TelaCliente> {
   var txtCidade = TextEditingController();
   var txtTelefone = TextEditingController();
 
-  getDocumentById(id) async{
-    await FirebaseFirestore.instance.collection('clientes')
-      .doc(id).get().then((doc) {
-        txtNome.text = doc.get('nome');
-      });
-  }
+  //variaveis de edicao
+  var txtNome2 = TextEditingController();
+  var txtCPF2 = TextEditingController();
+  var txtDtNascimento2 = TextEditingController();
+  var txtEmail2 = TextEditingController();
+  var txtCidade2 = TextEditingController();
+  var txtTelefone2 = TextEditingController();
 
   @override
   void initState() {
@@ -134,6 +135,13 @@ class _TelaClienteState extends State<TelaCliente> {
       ),
 
       onTap: () async {
+        txtNome2.text = nome;
+        txtCPF2.text = cpf;
+        txtDtNascimento2.text = dataNascimento;
+        txtTelefone2.text = telefone;
+        txtEmail2.text = email;
+        txtCidade2.text = endereco;
+
           await showDialog(
             context: context,
             builder: (context) {
@@ -151,7 +159,7 @@ class _TelaClienteState extends State<TelaCliente> {
                       children: [
                         TextField(
                           maxLength: 60,
-                          controller: txtNome,
+                          controller: txtNome2,
                           style: TextStyle(fontSize: 15),
                           decoration: InputDecoration(
                             labelText: "Nome Completo",
@@ -159,7 +167,7 @@ class _TelaClienteState extends State<TelaCliente> {
                         ),
                         TextField(
                           maxLength: 14,
-                          controller: txtCPF,
+                          controller: txtCPF2,
                           style: TextStyle(fontSize: 15),
                           decoration: InputDecoration(
                             labelText: "CPF",
@@ -167,7 +175,7 @@ class _TelaClienteState extends State<TelaCliente> {
                         ),
                         TextField(
                           maxLength: 10,
-                          controller: txtDtNascimento,
+                          controller: txtDtNascimento2,
                           style: TextStyle(fontSize: 15),
                           decoration: InputDecoration(
                             labelText: "Data nascimento",
@@ -175,7 +183,7 @@ class _TelaClienteState extends State<TelaCliente> {
                         ),
                         TextField(
                           maxLength: 14,
-                          controller: txtTelefone,
+                          controller: txtTelefone2,
                           style: TextStyle(fontSize: 15),
                           decoration: InputDecoration(
                             labelText: "Telefone",
@@ -183,7 +191,7 @@ class _TelaClienteState extends State<TelaCliente> {
                         ),
                         TextField(
                           maxLength: 30,
-                          controller: txtEmail,
+                          controller: txtEmail2,
                           style: TextStyle(fontSize: 15),
                           decoration: InputDecoration(
                             labelText: "Email",
@@ -191,7 +199,7 @@ class _TelaClienteState extends State<TelaCliente> {
                         ),
                         TextField(
                           maxLength: 30,
-                          controller: txtCidade,
+                          controller: txtCidade2,
                           style: TextStyle(fontSize: 15),
                           decoration: InputDecoration(
                             labelText: "Cidade",
@@ -209,22 +217,17 @@ class _TelaClienteState extends State<TelaCliente> {
                     onPressed: () {
                       setState(() {
                         
-                          if (txtNome.text.isNotEmpty && txtCPF.text.isNotEmpty && txtDtNascimento.text.isNotEmpty && txtTelefone.text.isNotEmpty && txtEmail.text.isNotEmpty && txtCidade.text.isNotEmpty) {
-                             
-                            //txtNome = clientes.doc(item.id).get('nome');
-
-                            getDocumentById(item.id);
-
+                          if (txtNome2.text.isNotEmpty && txtCPF2.text.isNotEmpty && txtDtNascimento2.text.isNotEmpty && txtTelefone2.text.isNotEmpty && txtEmail2.text.isNotEmpty && txtCidade2.text.isNotEmpty) {
                            editarCliente(
-                              item.id,txtNome.text, txtCPF.text, txtDtNascimento.text, txtEmail.text, txtCidade.text, txtTelefone.text
+                              item.id, txtNome2.text, txtCPF2.text, txtDtNascimento2.text, txtEmail2.text, txtCidade2.text, txtTelefone2.text
                             );
 
-                            txtNome.clear();
-                            txtCPF.clear();
-                            txtDtNascimento.clear();
-                            txtTelefone.clear();
-                            txtEmail.clear();
-                            txtCidade.clear();
+                            txtNome2.clear();
+                            txtCPF2.clear();
+                            txtDtNascimento2.clear();
+                            txtTelefone2.clear();
+                            txtEmail2.clear();
+                            txtCidade2.clear();
 
                             exibirMensagem('Cliente editado com sucesso.');
                           } else {

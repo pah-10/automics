@@ -17,12 +17,21 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
   //Referenciar a colecao do Firestore
   late CollectionReference veiculos;
 
+  //Variáveis de adicao
   var txtPlaca = TextEditingController();
   var txtModelo = TextEditingController();
   var txtMarca = TextEditingController();
   var txtAno = TextEditingController();
   var txtKm = TextEditingController();
   var txtCor = TextEditingController();
+
+  //Variaveis de edicao
+  var txtPlaca2 = TextEditingController();
+  var txtModelo2 = TextEditingController();
+  var txtMarca2 = TextEditingController();
+  var txtAno2 = TextEditingController();
+  var txtKm2 = TextEditingController();
+  var txtCor2 = TextEditingController();
 
   getDocumentById(id) async{
     await FirebaseFirestore.instance.collection('veiculos')
@@ -133,11 +142,18 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
       ),
 
       onTap: () async {
+        txtPlaca2.text = placa;
+        txtModelo2.text = modelo;
+        txtMarca2.text = marca;
+        txtAno2.text = ano;
+        txtCor2.text = cor;
+        txtKm2.text =  km;
+
           await showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Editar Cliente', style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
+                title: Text('Editar Veiculo', style: TextStyle(fontSize: 20), textAlign: TextAlign.center,),
 
                 content: Container(
 
@@ -149,7 +165,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
 
                       children: [
                         TextField(
-                            controller: txtPlaca,
+                            controller: txtPlaca2,
                             maxLength: 8,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
@@ -157,7 +173,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                             ),
                           ),
                           TextField(
-                            controller: txtModelo,
+                            controller: txtModelo2,
                             maxLength: 30,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
@@ -165,7 +181,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                             ),
                           ),
                           TextField(
-                            controller: txtMarca,
+                            controller: txtMarca2,
                             maxLength: 30,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
@@ -173,7 +189,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                             ),
                           ),
                           TextField(
-                            controller: txtAno,
+                            controller: txtAno2,
                             maxLength: 4,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
@@ -181,7 +197,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                             ),
                           ),
                           TextField(
-                            controller: txtKm,
+                            controller: txtKm2,
                             maxLength: 10,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
@@ -189,7 +205,7 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                             ),
                           ),
                           TextField(
-                            controller: txtCor,
+                            controller: txtCor2,
                             maxLength: 20,
                             style: TextStyle(fontSize: 15),
                             decoration: InputDecoration(
@@ -208,17 +224,17 @@ class _TelaVeiculoState extends State<TelaVeiculo> {
                     onPressed: () {
                       setState(() {
                         
-                          if (txtPlaca.text.isNotEmpty && txtModelo.text.isNotEmpty && txtMarca.text.isNotEmpty && txtAno.text.isNotEmpty && txtCor.text.isNotEmpty && txtKm.text.isNotEmpty){
+                          if (txtPlaca2.text.isNotEmpty && txtModelo2.text.isNotEmpty && txtMarca2.text.isNotEmpty && txtAno2.text.isNotEmpty && txtCor2.text.isNotEmpty && txtKm2.text.isNotEmpty){
                            editarVeiculo(
-                             item.id,txtAno.text, txtCor.text, txtKm.text, txtMarca.text, txtModelo.text, txtPlaca.text,
+                             item.id, txtAno2.text, txtCor2.text, txtKm2.text, txtMarca2.text, txtModelo2.text, txtPlaca2.text,
                               );
 
-                              txtPlaca.clear();
-                              txtModelo.clear();
-                              txtMarca.clear();
-                              txtAno.clear();
-                              txtKm.clear();
-                              txtCor.clear();
+                              txtPlaca2.clear();
+                              txtModelo2.clear();
+                              txtMarca2.clear();
+                              txtAno2.clear();
+                              txtKm2.clear();
+                              txtCor2.clear();
 
                             exibirMensagem('Cliente editado com sucesso.');
                           } else {
